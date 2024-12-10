@@ -2045,6 +2045,10 @@ function _filter_xss_attributes($attr) {
           if (strpos($attrname, 'data-') === 0 || $attrname == 'alt' || $attrname == 'title') {
             $thisval = $match[1];
           }
+          // Filter
+          elseif ($attrname == 'class') {
+            $thisval = backdrop_clean_css_identifier($match[1]);
+          }
           // Strip bad protocols from all other attributes, e.g. href, src.
           else {
             $thisval = filter_xss_bad_protocol($match[1]);
