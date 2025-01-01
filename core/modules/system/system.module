@@ -153,7 +153,7 @@ function system_theme() {
  * Implements hook_permission().
  */
 function system_permission() {
-  return array(
+  $permissions = array(
     'administer modules' => array(
       'title' => t('Administer modules'),
     ),
@@ -168,8 +168,20 @@ function system_permission() {
     'administer software updates' => array(
       'title' => t('Administer software updates'),
       'restrict access' => TRUE,
-      'warning' => t('Run site updates for Backdrop projects.'),
+      'warning' => t('Allows running site updates (update.php) for Backdrop projects.'),
     ),
+  );
+  // If backups are not configured, do not show related permission.
+  if (backup_get_backup_directory()) {
+    $permissions += array(
+      'restore site backups' => array(
+        'title' => t('Restore site backups'),
+        'restrict access' => TRUE,
+        'warning' => t('Allows restoring the configuration and database from backups (restore.php).'),
+      ),
+    );
+  }
+  $permissions += array(
     'access administration pages' => array(
       'title' => t('Use the administration pages'),
     ),
@@ -188,6 +200,8 @@ function system_permission() {
       'description' => t('Provides access to manually flush caches.'),
     ),
   );
+
+  return $permissions;
 }
 
 /**
@@ -396,12 +410,14 @@ function system_element_info() {
     '#cols' => 60,
     '#rows' => 5,
     '#resizable' => 'vertical',
+    '#description_display' => 'before',
     '#process' => array('ajax_process_form'),
     '#theme' => 'textarea',
     '#theme_wrappers' => array('form_element'),
   );
   $types['radios'] = array(
     '#input' => TRUE,
+    '#description_display' => 'before',
     '#process' => array('form_process_radios'),
     '#theme_wrappers' => array('container__radios'),
     '#pre_render' => array('form_pre_render_conditional_form_element'),
@@ -416,6 +432,7 @@ function system_element_info() {
   );
   $types['checkboxes'] = array(
     '#input' => TRUE,
+    '#description_display' => 'before',
     '#process' => array('form_process_checkboxes'),
     '#theme_wrappers' => array('container__checkboxes'),
     '#pre_render' => array('form_pre_render_conditional_form_element'),
@@ -515,6 +532,7 @@ function system_element_info() {
     '#collapsible' => FALSE,
     '#collapsed' => FALSE,
     '#value' => NULL,
+    '#description_display' => 'before',
     '#process' => array('form_process_fieldset', 'ajax_process_form'),
     '#pre_render' => array('form_pre_render_fieldset'),
     '#theme_wrappers' => array('fieldset'),
@@ -4169,6 +4187,10 @@ function system_config_info() {
     'label' => t('System authorize'),
     'group' => t('Configuration'),
   );
+  $prefixes['system.backup'] = array(
+    'label' => t('System backup'),
+    'group' => t('Configuration'),
+  );
   $prefixes['system.date'] = array(
     'label' => t('System date'),
     'group' => t('Configuration'),
@@ -4213,14 +4235,14 @@ function system_system_info_alter(&$info, $file, $type) {
  * Menu callback; Returns the standard "Page not found" error page.
  */
 function system_404() {
-  return t('The requested page "@path" could not be found.', array('@path' => request_uri()));
+  return '<p>' . t('The requested page "@path" could not be found.', array('@path' => request_uri())) . '</p>';
 }
 
 /**
  * Menu callback; Returns the standard "Page not found" error page.
  */
 function system_403() {
-  return t('You are not authorized to access this page.');
+  return '<p>' . t('You are not authorized to access this page.') . '</p>';
 }
 
 /**
