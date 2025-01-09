@@ -4360,7 +4360,7 @@ function backdrop_clean_css_identifier($identifier, $filter = array(' ' => '-', 
   // - 0-9 (U+0061 - U+007A)
   // - ISO 10646 characters U+00A1 and higher
   // We strip out any character not in the above list.
-  $identifier = preg_replace('/[^\x{002D}\x{002E}\x{002F}\x{0030}-\x{0039}\x{003A}\x{0040}\x{0041}-\x{005A}\x{005F}\x{0061}-\x{007A}\x{00A1}-\x{FFFF}]/u', '', $identifier);
+  $identifier = preg_replace('/[^\x{002D}-\x{003A}\x{0040}-\x{005A}\x{005F}\x{0061}-\x{007A}\x{00A1}-\x{FFFF}]/u', '', $identifier);
 
   // Identifiers cannot start with a digit, two hyphens, or a hyphen followed by a digit.
   $identifier = preg_replace(array('/^[0-9]/', '/^(-[0-9])|^(--)/'), array('_', '__') , $identifier);
