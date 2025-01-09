@@ -2045,7 +2045,8 @@ function _filter_xss_attributes($attr) {
           if (strpos($attrname, 'data-') === 0 || $attrname == 'alt' || $attrname == 'title') {
             $thisval = $match[1];
           }
-          // Filter
+          // Filter the class attribute using a function already built
+          // for that purpose.
           elseif ($attrname == 'class') {
             $thisval = backdrop_clean_css_identifier($match[1]);
           }
